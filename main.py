@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from app.services.ollama_service import ask_mistral
+from app.services.ollama_service import ask_llm
+from app.services.memory_service import (
+    add_message,
+    get_history
+)
 
 app = FastAPI()
 
@@ -17,9 +21,14 @@ def home():
 
 @app.post("/chat")
 def chat(req: ChatRequest):
-    print("Received:", req.message)
-    
-    answer = ask_mistral(req.message)
+
+    add_message("user", req.message)
+
+    answer = ask_llm(
+        get_history()
+    )
+
+    add_message("assistant", answer)
 
     return {
         "user_message": req.message,

@@ -1,15 +1,10 @@
 import ollama
 
 
-def ask_mistral(message: str) -> str:
+def ask_llm(messages):
     response = ollama.chat(
         model="llama3.2:1b",
-        messages=[
-            {
-                "role": "user",
-                "content": message,
-            }
-        ],
+        messages = messages,
     )
 
     return response["message"]["content"]
