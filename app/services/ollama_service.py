@@ -2,12 +2,14 @@ import ollama
 
 from fastapi import HTTPException
 
+from app.core.config import settings
+
 def ask_llm(messages):
 
     try:
 
         response = ollama.chat(
-            model="llama3.2:1b",
+            model=settings.OLLAMA_MODEL,
             messages=messages,
         )
 
