@@ -1,8 +1,8 @@
 import ollama
 
 from fastapi import HTTPException
-
 from app.core.config import settings
+from app.core.logger import logger
 
 def ask_llm(messages):
 
@@ -15,9 +15,13 @@ def ask_llm(messages):
 
         return response["message"]["content"]
 
+    
     except Exception as e:
-
-        raise HTTPException(
-            status_code=500,
-            detail=f"LLM Error: {str(e)}"
+        logger.error(
+        f"Ollama error: {str(e)}"
         )
+        
+        #raise HTTPException(
+            #status_code=500,
+            #detail=f"LLM Error: {str(e)}"
+        #)

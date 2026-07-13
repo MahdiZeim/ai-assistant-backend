@@ -9,6 +9,7 @@ from app.services.memory_service import (
 )
 from app.services.ollama_service import ask_llm
 
+from app.core.logger import logger
 
 router = APIRouter(
     prefix="/chat",
@@ -27,7 +28,7 @@ def chat(
     db: Session = Depends(get_db),
 ):
 
-    print("message sent, waiting for response")
+    #print("message sent, waiting for response")
     add_message(
         db=db,
         session_id=req.session_id,
@@ -40,7 +41,16 @@ def chat(
         session_id=req.session_id,
     )
 
+    #save message to logger
+    logger.info(
+    f"Chat request received: {req.session_id}"
+    )
+
     answer = ask_llm(history)
+
+    logger.info(
+    "AI response generated successfully"
+    )
 
     add_message(
         db=db,
