@@ -13,8 +13,7 @@ from app.services.memory_service import (
     get_history,
 )
 
-from app.services.ollama_service import ask_llm
-
+import app.services.ollama_service as ollama_service
 
 def chat(
     db: Session,
@@ -47,7 +46,7 @@ def chat(
     )
 
     # Generate a response using the language model.
-    answer = ask_llm(history)
+    answer = ollama_service.ask_llm(history)
 
     # Store the AI response.
     add_message(

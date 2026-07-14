@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database.database import get_db
@@ -13,18 +12,22 @@ from app.core.logger import logger
 
 from app.services.chat_service import chat as chat_service
 
+from app.schemas.chat import (
+    ChatRequest,
+    ChatResponse,
+)
+
 router = APIRouter(
     prefix="/chat",
     tags=["Chat"]
 )
 
 
-class ChatRequest(BaseModel):
-    session_id: str
-    message: str
 
-
-@router.post("/")
+@router.post(
+    "/",
+    response_model=ChatResponse,
+)
 def chat(
     req: ChatRequest,
     db: Session = Depends(get_db),
