@@ -1,4 +1,5 @@
 import ollama
+import os
 
 from fastapi import HTTPException
 from app.core.config import settings
@@ -8,6 +9,9 @@ def ask_llm(messages):
 
     try:
 
+        # Configure Ollama host from application settings.
+        os.environ["OLLAMA_HOST"] = settings.OLLAMA_HOST
+        
         response = ollama.chat(
             model=settings.OLLAMA_MODEL,
             messages=messages,
