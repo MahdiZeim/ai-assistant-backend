@@ -11,6 +11,8 @@ from app.services.ollama_service import ask_llm
 
 from app.core.logger import logger
 
+from app.services.chat_service import chat as chat_service
+
 router = APIRouter(
     prefix="/chat",
     tags=["Chat"]
@@ -27,39 +29,26 @@ def chat(
     req: ChatRequest,
     db: Session = Depends(get_db),
 ):
+    """
+    Receive chat requests and delegate
+    the business logic to ChatService.
+    """
 
-    #print("message sent, waiting for response")
-    add_message(
-        db=db,
-        session_id=req.session_id,
-        role="user",
-        content=req.message,
-    )
-
-    history = get_history(
-        db=db,
-        session_id=req.session_id,
-    )
-
-    #save message to logger
+    # Log the incoming request.
     logger.info(
-    f"Chat request received: {req.session_id}"
+        f"Chat request received: {req.session_id}"
     )
 
-    answer = ask_llm(history)
-
-    logger.info(
-    "AI response generated successfully"
-    )
-
-    add_message(
+    # Delegate all business logic to ChatService.
+    response = chat_service(
         db=db,
         session_id=req.session_id,
-        role="assistant",
-        content=answer,
+        message=req.message,
     )
 
-    return {
-        "user_message": req.message,
-        "ai_response": answer,
-    }
+    # Log successful completion.
+    logger.info(
+        "AI response generated successfully."
+    )
+
+    return response
